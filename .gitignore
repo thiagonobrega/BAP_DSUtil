@@ -10,6 +10,9 @@ $RECYCLE.BIN/
 .Rproj.user/
 .RData
 folha.Rproj
+_pycache_/
+__pycache__/
+*/_pycache_/
 
 # Windows Installer files
 *.cab
