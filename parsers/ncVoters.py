@@ -53,20 +53,30 @@ def filterData(data):
     ##
     ### basic
     ###    county ,street,city,state,zip, phone
-    bad = [row[1],row[13],row[14],row[15],row[16], row[24]]
+    #bad = [row[1],row[13],row[14],row[15],row[16], row[24]]
+    
+    ###    county , phone
+    bad = [row[1], row[24]]
+    
     ### extra
     ### mail_adddr1,mail_addr2,mail_city,mail_state,mail_zip
-    ead = [row[17] ,row[18] , row[21] , row[22] , row[23] ]
+    #ead = [row[17] ,row[18] , row[21] , row[22] , row[23] ]
+    ### mail_adddr1,mail_city,mail_state,mail_zip
+    ead = [row[17] , row[21] , row[22] , row[23] ]
     
     ##
     ## Personal Data : data about the voter (name,gender,bith,etc...)
     ##
     ### basic personal data
     ### voter_id, lastname , firstname , midlname ,  name_sufix , gender, age , race , ethinic
-    bpd = [ row[2],row[9],row[10],row[11],row[12],row[28],row[29], row[25],row[26] ]
+    #bpd = [ row[2],row[9],row[10],row[11],row[12],row[28],row[29], row[25],row[26] ]
+    ### lastname , firstname , midlname ,  name_sufix , gender, age , race , ethinic
+    bpd = [ row[9],row[10],row[11],row[12],row[28],row[29], row[25],row[26] ]
     ### extra personal data
     ### birth_place , register_date ,ncid
-    epd = [ row[30], row[32], row[68] ]
+    #epd = [ row[30], row[32], row[68] ]
+    ### birth_place , register_date
+    epd = [ row[30], row[32] ]
         
     entity = bpd + bad + epd + ead
 #     fdata.append(entity)
@@ -114,7 +124,7 @@ def listFiles(dir):
 
 if __name__ == '__main__':
     
-    dir = "F:\\Arquivo_Morto\\DataSet\\NC_Voter\\"
+    dir = "F:\\Arquivo_Morto\\DataSet\\US\\NC_Voter\\"
 #     listFiles(dir)
 #     import sys
 #     sys.exit()
