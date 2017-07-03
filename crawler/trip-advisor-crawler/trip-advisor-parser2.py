@@ -90,9 +90,42 @@ def main():
                 data = soup.find('script', type='application/ld+json').text
                 import json
                 jd = json.loads(data)
-                print(jd)
-            print(filepath)
-#                 writer.writerow(review)
+#                 print(jd)
+                review_labels = ['author','datePublished','reviewBody']
+                
+                review_data = []
+                for item in review_labels:
+                    review_data.append(jd[item])
+                
+                #label
+                rating_data = jd['reviewRating']
+                review_data.append(rating_data['ratingValue'])
+                
+                place = jd['itemReviewed']
+                
+                place_data = []
+                #label
+                place_data.append(place['name'])
+                
+                place_addr = place['address']
+                #label
+                adress_labels = ['streetAddress', 'addressLocality', 'addressRegion', 'postalCode']
+                
+                for item in adress_labels:
+                    place_data.append(place_addr[item])
+                
+                #label
+                country = place_addr['addressCountry']
+                place_data.append(country['name'])
+                    
+#                 print(review_data)
+#                 print(place_data)
+                full_data = place_data + review_data
+#                 print(full_data)
+
+                
+#             print(filepath)
+                writer.writerow(full_data)
 
 
 if __name__ == '__main__':
