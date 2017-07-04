@@ -17,116 +17,78 @@
 
 import argparse
 import csv
-import fnmatch
 import os
 import re
 import sys
 import codecs
+import fnmatch
+import multiprocessing
+import ParallelReader
+
+
 
 if sys.version_info[0] >= 3:
     import html
 
 
+
 def get_review_filesnames(input_dir):
     for root, dirnames, filenames in os.walk(input_dir):
         for filename in fnmatch.filter(filenames, '*.html'):
-            yield os.path.join(root, filename)
-
-
-def cleanhtml(htmltext):
-    cleanre = re.compile('<.*?>')
-    cleantext = re.sub(cleanre, ' ', htmltext)
-    return cleantext
-
-
-summaryre = re.compile(r'innerBubble(.*?)reportProblem', re.M | re.S)
-# old format
-# overallratingre = re.compile(r'class="sprite-rating_s_fill rating_s_fill s([0-9])0\"')
-overallratingre = re.compile(r'reviewItemInline.*?bubble_([0-9])', re.M | re.S)
-reviewtextre = re.compile(r'<div class="entry">(.*?)</div>', re.M | re.S)
-aspectre = re.compile(r'recommend-answer(.*?)</li>', re.M | re.S)
-# old format
-# aspectratingre = re.compile(r'sprite-rating_ss_fill rating_ss_fill ss([0-9])0')
-aspectratingre = re.compile(r'bubble_([0-9])')
-# old format
-# aspectnamere = re.compile(r'span>(.*)$', re.M | re.S)
-aspectnamere = re.compile(r'recommend-description">(.*)</div$', re.M | re.S)
-# old format, sometimes still used
-oldhotelnamere = re.compile(r'warLocName">(.*)?</div>')
-althotelnamere = re.compile(r'"description" content="(.*)?:')
-hotelnamere = re.compile(r'title: "(.*)?"')
-idre = re.compile(r'id="review_([0-9]+)"')
-
-json_part = re.compile(r'"description" content="(.*)?:')
-
-
-def get_aspect_ratings(block):
-    rates = list()
-    for aspectrating in aspectre.findall(block):
-        rating = aspectratingre.findall(aspectrating)[0]
-        name = aspectnamere.findall(aspectrating)[0].strip()
-        rates.append(':'.join([name, rating]))
-    return u';'.join(rates)
-
-
-def main():
-    # sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
-    parser = argparse.ArgumentParser(
-        description='TripAdvisor Hotel parser')
-    parser.add_argument('-d', '--dir', help='Directory with the data for parsing', required=True)
-    parser.add_argument('-o', '--outfile', help='Output file path for saving the reviews in csv format', required=True)
-
-    args = parser.parse_args()
-
-    reviews = set()
-
-    with codecs.open(args.outfile, 'w', encoding='utf8') as out:
-        writer = csv.writer(out, lineterminator='\n')
-        for filepath in get_review_filesnames(args.dir):
-            with codecs.open(filepath, mode='r', encoding='utf8') as file:
-                htmlpage = file.read()
-                from bs4 import BeautifulSoup
-                soup = BeautifulSoup(htmlpage, "html.parser")
-                data = soup.find('script', type='application/ld+json').text
-                import json
-                jd = json.loads(data)
-#                 print(jd)
-                review_labels = ['author','datePublished','reviewBody']
-                
-                review_data = []
-                for item in review_labels:
-                    review_data.append(jd[item])
-                
-                #label
-                rating_data = jd['reviewRating']
-                review_data.append(rating_data['ratingValue'])
-                
-                place = jd['itemReviewed']
-                
-                place_data = []
-                #label
-                place_data.append(place['name'])
-                
-                place_addr = place['address']
-                #label
-                adress_labels = ['streetAddress', 'addressLocality', 'addressRegion', 'postalCode']
-                
-                for item in adress_labels:
-                    place_data.append(place_addr[item])
-                
-                #label
-                country = place_addr['addressCountry']
-                place_data.append(country['name'])
-                    
-#                 print(review_data)
-#                 print(place_data)
-                full_data = place_data + review_data
-#                 print(full_data)
-
-                
-#             print(filepath)
-                writer.writerow(full_data)
+            yield os.path.join(root, filename)    
 
 
 if __name__ == '__main__':
-    main()
+    # sys.stdout = codecs.getwriter('utf8')(sys.stdout.buffer)
+    parser = argparse.ArgumentParser(
+        description='TripAdvisor Restaurant parser')
+    parser.add_argument('-d', '--dir', help='Directory with the data for parsing', required=True)
+    parser.add_argument('-o', '--outfile', help='Output file path for saving the reviews in csv format', required=True)
+    parser.add_argument('-p', '--process',  action='store', dest='process', type=int,  help='Number of process', default=4)
+
+    args = parser.parse_args()
+    pool_size = int(args.process)
+    print("POOL SIZE : " + str(pool_size) )
+    
+    #labels
+    review_labels = ['author','datePublished','reviewBody']
+    rating_label = 'ratingValue'
+    name_label = 'name'
+    adress_labels = ['streetAddress', 'addressLocality', 'addressRegion', 'postalCode']
+    country_label = 'country'
+    
+    #multiprocessor
+    pool = multiprocessing.Pool(processes=pool_size, initializer=ParallelReader.start_process )#@UnusedVariable @UndefinedVariable
+    job_args = []    
+    file_list = get_review_filesnames(args.dir)
+    
+    i = 0
+#     totalf = len(file_list)
+    import time
+    t0 = time.time()
+    for filepath in file_list:
+        job_args.append([filepath,review_labels,rating_label,name_label,adress_labels])
+        i += 1
+        if i % 1000 == 0:
+            delta = time.time()-t0
+            print(str(i) + " in " + str(delta) + " s")
+            t0 = time.time()
+    
+    t0 = time.time()
+    print("Start computation")
+    pool_outputs = pool.map(ParallelReader.exec_wrap, job_args )
+    pool.close()  # no more tasks
+    pool.join()  # wrap up current tasks
+    delta = time.time()-t0
+    print("End computation in " + str(delta) + " s")
+
+    #print(pool_outputs)    
+    t0 = time.time()
+    print("Writing csv")    
+    with codecs.open(args.outfile, 'w', encoding='utf8') as out:
+        writer = csv.writer(out, delimiter=",", quotechar='"', quoting=csv.QUOTE_NONNUMERIC  ,lineterminator='\n')
+        for row in pool_outputs:
+            writer.writerow(row)
+    
+    delta = time.time()-t0
+    print("Done writing csv in " + str(delta) + " s!")
