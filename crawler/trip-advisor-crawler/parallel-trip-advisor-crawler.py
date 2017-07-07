@@ -117,10 +117,15 @@ def main():
             '-o', '--out', help='Output base path', required=True)
     parser.add_argument('ids', metavar='ID', nargs='+',
                         help='IDs for which to download reviews')
+    
+    parser.add_argument(
+            '-c', '--concurrent', help='Concurrent downloads. Default :8',
+            required=False, type=int, default=3)
     args = parser.parse_args()
 
     basepath = args.out
-    pool_size = 8
+    pool_size = args.concurrent
+    
     if not os.path.exists(basepath):
         os.makedirs(basepath)
 
