@@ -160,9 +160,13 @@ def main():
                 
             print(":: Downloading " + locationid )
             pool_outputs = pool.map(ParallelCrawler.exec_wrap, job_args )
-            for line in pool_outputs:
-                file.write(line)
-                file.write("\n")
+            
+            try:
+                for line in pool_outputs:
+                    file.write(str(line))
+                    file.write("\n")
+            except:
+                print("@Error writing")
                 
             pool.close()  # no more tasks
             pool.join()  # wrap up current tasks
