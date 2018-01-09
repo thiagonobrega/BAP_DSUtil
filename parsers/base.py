@@ -9,6 +9,16 @@ import pandas as pd
 import numpy as np
 import csv
 
+def checkDir(dirToScreens,extension=".csv"):
+    import os
+    from os import path
+    files = []
+    for f in os.listdir(dirToScreens):
+        if f.endswith(extension):
+            files.append(f)
+    return files
+
+
 def get_sample(data,sample_index):
     return data.iloc[sample_index]
 
@@ -42,12 +52,24 @@ def readData(file,sep=",", encoding = "utf8", headers = 'infer'):
     return data
 
 
+def convert2DUMAS(data):
+    '''
+        Data pre-processing to DUMAS
+    '''
+    for i in range(0,len(data)):
+        for j,header in enumerate(data.columns):
+            if (str(data[header][i]) == "nan"):
+                data.set_value(i,header,"")
+            data.set_value(i,header,str(data[header][i]).replace(';',''))
+    return data
+
 def writeData(data,file,encoding = "utf8",index=False):
     """
         save the data (pandas) to a file
     """
     if index:
-        data.index.names = ['ID']
-        data.to_csv(file,index=index,encoding=encoding ,quoting=csv.QUOTE_NONNUMERIC)
+        data = convert2DUMAS(data)
+        data.index.names = ['KeyCol']
+        data.to_csv(file,index=index,encoding=encoding ,quoting=csv.QUOTE_NONE, sep = ';')
     else:
         data.to_csv(file,index=index,encoding=encoding ,quoting=csv.QUOTE_ALL)
