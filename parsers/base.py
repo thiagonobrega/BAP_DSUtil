@@ -63,12 +63,13 @@ def convert2DUMAS(data):
             data.set_value(i,header,str(data[header][i]).replace(';',''))
     return data
 
-def writeData(data,file,encoding = "utf8",index=False):
+def writeData(data,file,encoding = "utf8",index=False,dumasConvert=True):
     """
         save the data (pandas) to a file
     """
     if index:
-        data = convert2DUMAS(data)
+        if dumasConvert:
+            data = convert2DUMAS(data)
         data.index.names = ['KeyCol']
         data.to_csv(file,index=index,encoding=encoding ,quoting=csv.QUOTE_NONE, sep = ';')
     else:
