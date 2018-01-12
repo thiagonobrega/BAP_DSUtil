@@ -56,3 +56,12 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .Rproj.user
+crawler/trip-advisor-crawler/.spyproject/codestyle.ini
+crawler/trip-advisor-crawler/.spyproject/encoding.ini
+crawler/trip-advisor-crawler/.spyproject/vcs.ini
+crawler/trip-advisor-crawler/.spyproject/workspace.ini
+.settings/org.eclipse.core.resources.prefs
+.spyproject/encoding.ini
+.spyproject/vcs.ini
+.spyproject/codestyle.ini
+.spyproject/workspace.ini
