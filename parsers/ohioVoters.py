@@ -12,6 +12,12 @@ import csv
 #head powershell
 #gc log.txt | select -first 10 # head
 
+from datetime import datetime
+from parsers import base
+import os
+
+from datetime import datetime
+
 def convertData(file,headers= 0,delimiter = '\,', quote=csv.QUOTE_ALL):
     """
         Read data from ziped file
@@ -118,3 +124,27 @@ if __name__ == '__main__':
 #     data = convertData(zfile, fo)
 #     
     print("Done!")
+    
+
+
+#fast fix in data (remove later)
+#"birth_date","register_date"
+
+def fix_date(din):
+    d = str(din)
+    dt = datetime.strptime(str(d),'%Y-%m-%d')
+    newdate = str(dt.day) + "/" + str(dt.month) + "/" + str(dt.year)
+    return newdate
+
+in_dir ="F:"+os.path.sep+"z_dados"+os.path.sep+"us_voters"+os.path.sep
+file = "ohio_voters_striped_full.csv"
+data = base.readData(in_dir+file, sep=",")
+
+data['birth_date'] = data['birth_date'].apply(fix_date)
+data['register_date'] = data['register_date'].apply(fix_date)
+
+base.writeData(data,in_dir+'ohio_voters.csv')
+
+
+import sys
+sys.exit()
