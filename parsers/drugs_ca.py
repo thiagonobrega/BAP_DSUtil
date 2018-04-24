@@ -32,7 +32,7 @@ def readFile(in_dir,file,columns_name):
             
     return data[list(set(columns_name)-set(delete_columns))]
 
-
+#outdir =os.path.sep+"home/thiago/dados"+os.path.sep+"drugs"+os.path.sep
 outdir ="F:"+os.path.sep+"z_dados"+os.path.sep+"drugs"+os.path.sep
 indir=outdir+"cvponline_extract_20170331"+os.path.sep
 
@@ -178,7 +178,9 @@ delete_columns = [ 'DRUG_PRODUCT_ID','SERIOUSNESS_CODE',
                   'OUTCOME_LX_ID','SOURCE_CODE','SERIOUSNESS_ENG','MAH_NO',
                   'FREQUENCY_TIME_ENG','REPORT_ID','CONGENITAL_ANOMALY',
                   'DEATH','HOSP_REQUIRED','DISABILITY','SERIOUSNESS_EN',
-                  'OUTCOME_EN']
+                  'OUTCOME_EN' ] + ['UNIT_DOSE_QTY', 'DOSE_UNIT_ENG' , 'DATRECEIVED'
+                  'REPORTER_TYPE_ENG', 'SOURCE_ENG', 'REPORT_TYPE_ENG']
+
 
 for d in list(data.columns):
     if "FR_" in d:
@@ -207,6 +209,8 @@ data['GENDER_ENG'] = data['GENDER_ENG'].str.replace("UNKNOWN","UNK")
 #HEIGHT,WEIGHT
 
 data['DATINTRECEIVED'] = data['DATINTRECEIVED'].apply(fix_date)
+
+data = data.apply(lambda x: x.astype(str).str.upper())
 
 #datetime.strptime(str(data['DATINTRECEIVED'][10]),'%d-%b-%y')
 #data.columns

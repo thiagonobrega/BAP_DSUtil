@@ -129,6 +129,14 @@ if __name__ == '__main__':
 
 #fast fix in data (remove later)
 #"birth_date","register_date"
+import zipfile
+import io
+import csv
+from datetime import datetime
+from parsers import base
+import os
+
+from datetime import datetime
 
 def fix_date(din):
     d = str(din)
@@ -137,6 +145,7 @@ def fix_date(din):
     return newdate
 
 in_dir ="F:"+os.path.sep+"z_dados"+os.path.sep+"us_voters"+os.path.sep
+in_dir =os.path.sep+"home/thiago/dados"+os.path.sep+"us_voters"+os.path.sep
 file = "ohio_voters_striped_full.csv"
 data = base.readData(in_dir+file, sep=",")
 

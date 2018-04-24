@@ -7,6 +7,7 @@ Created on Tue Jan  9 10:46:35 2018
 
 from parsers import base
 import pandas as pd
+import os
 
 def readFile(in_dir,file,cols,sep=";",encoding='latin-1'):
     data = base.readData(in_dir+file, sep=sep,encoding=encoding)
@@ -36,14 +37,15 @@ cols_iptu = ['NUMERO DO CONTRIBUINTE', 'ANO DO EXERCICIO', 'NUMERO DA NL',
               'ANO DE INICIO DA VIDA DO CONTRIBUINTE']
 
 
+#indir =os.path.sep+"home/thiago/dados"+os.path.sep+"SP_Adresses"+os.path.sep
 indir="F:\\z_dados\\SP_Adresses\\"
 
 
-files = base.checkDir(indir+"IPTU\\")
-data = readFile(indir+"IPTU\\",files[0],cols_iptu)
+files = base.checkDir(indir+"IPTU"+os.path.sep)
+data = readFile(indir+"IPTU"+os.path.sep,files[0],cols_iptu)
 for file in files[1:]:
     print("Read data from IPTU : %s" % file)
-    df = readFile(indir+"IPTU\\",file,cols_iptu)
+    df = readFile(indir+"IPTU"+os.path.sep,file,cols_iptu)
     data = pd.concat([data,df])
     del df
 del file ,files
@@ -67,12 +69,13 @@ base.writeData(data,indir+'parsed_iptu.csv')
 
 file='DEINFO_DADOS_US_CNEFE_2010.csv'
 cols_cnef=['CEP','TIPO_LOGRA', 'NOME_LOGRA', 'NUMERO_EDI','LOCALIDADE',
-      'ESPECIE_EN','IDENT_ESTA', 'NUM_FACE']
-data = readFile(indir+"CNEF\\",file,cols_cnef,sep=",")
+      'ESPECIE_EN','IDENT_ESTA', 'NUM_FACE' , 'AREAP']
+data = readFile(indir+"CNEF"+os.path.sep,file,cols_cnef,sep=",")
 
 #criando o logradouro
-data['LOGRADOURO'] = data['TIPO_LOGRA'] + " " + data['NOME_LOGRA']
-data = data[list(set(data.columns)-set(['TIPO_LOGRA','NOME_LOGRA']))]
+#data['LOGRADOURO'] = data['TIPO_LOGRA'] + " " + data['NOME_LOGRA']
+#data = data[list(set(data.columns)-set(['TIPO_LOGRA','NOME_LOGRA']))]
+
 print("Writing : CNEF")
 base.writeData(data,indir+'parsed_cnef.csv')
 
@@ -82,7 +85,7 @@ base.writeData(data,indir+'parsed_cnef.csv')
 
 base.writeData(data,indir+'dumas_cnef.csv',index=True)
 
-data = readFile(indir+"IPTU\\",'IPTU_Part_05_750K.csv',cols_iptu)
+data = readFile(indir+"IPTU"+os.path.sep,'IPTU_Part_05_750K.csv',cols_iptu)
 base.writeData(data,indir+'dumas_iptu.csv',index=True)
 
 

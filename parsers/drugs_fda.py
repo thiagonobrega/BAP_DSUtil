@@ -30,6 +30,7 @@ def fix_date(din):
         newdate = str(dt.day) + "/" + str(dt.month) + "/" + str(dt.year) 
     return newdate
 
+#outdir =os.path.sep+"home/thiago/dados"+os.path.sep+"drugs"+os.path.sep
 outdir ="F:"+os.path.sep+"z_dados"+os.path.sep+"drugs"+os.path.sep
 indir=outdir+"fda"+os.path.sep
 
@@ -83,7 +84,7 @@ delete_columns = ["primaryid","caseid","prodai","dur","dur_cod","end_dt",
                   "fda_dt",'rept_cod','mfr_num','rept_dt','to_mfr',
                   'reporter_country','drug_seq','val_vbm','cum_dose_chr',
                   'cum_dose_unit','dechal','rechal','exp_dt','nda_num','dose_amt',
-                  'dose_freq','dsg_drug_seq','end_dt','lit_ref']
+                  'dose_freq','dsg_drug_seq','end_dt','lit_ref'] + 
 
 for d in list(data.columns):
     if "FR_" in d:
@@ -91,7 +92,7 @@ for d in list(data.columns):
 
 data = data[list(set(data.columns)-set(delete_columns))]
 
-#del d,delete_columns,data_ind,data_outcome
+#del d,delete_columns,data_ind,data_outcomet
 
 ###
 #data['occp_cod'].unique()
@@ -122,10 +123,11 @@ data['event_dt'] = data['event_dt'].astype(str).apply(cut)
 #data['drugname']
 
 data['event_dt'] = data['event_dt'].apply(fix_date)
+data = data.apply(lambda x: x.astype(str).str.upper())
 
 print(":: Saving data ...")
 print("Dumas")
 base.writeData(data.apply(lambda x: x.astype(str).str.replace(';','')),outdir+'dumas_drugs_fda.csv',index=True,dumasConvert=False)
 print("BAP")
 base.writeData(data,outdir+'drugs_fda.csv')
-#data = data.apply(lambda x: x.astype(str).str.upper())
+

@@ -1,4 +1,5 @@
 from parsers import base
+import os
 
 def readFile(in_dir,file,cols):
     data = base.readData(in_dir+file, sep=",",encoding='latin-1')
@@ -12,6 +13,7 @@ def readFile(in_dir,file,cols):
 
 
 indir="F:\\z_dados\\fei\\"
+indir =os.path.sep+"home/thiago/dados"+os.path.sep+"fei"+os.path.sep
 
 ##
 ## LEI

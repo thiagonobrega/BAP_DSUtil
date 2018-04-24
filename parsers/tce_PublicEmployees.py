@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+*# -*- coding: utf-8 -*-
 """
 Created on Sun Jan 14 19:11:52 2018
 
@@ -17,8 +17,9 @@ def readFile(in_dir,file):
     return base.readData(in_dir+file, sep="|", encoding="iso-8859-1")
 
 indir ="F:"+os.path.sep+"z_dados"+os.path.sep+"PublicEmployees"+os.path.sep
+#indir =os.path.sep+"home/thiago/dados"+os.path.sep+"PublicEmployees"+os.path.sep
 ds = "tce" + os.path.sep
-file = "TCE-PB-SAGRES-Folha_Pessoal_Esfera_Estadual-062017.txt"
+file = "TCE-PB-SAGRES-Folha_Pessoal_Esfera_Estadual-2017.txt"
 
 data = readFile(indir+ds,file)
 

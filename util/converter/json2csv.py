@@ -12,6 +12,18 @@ import collections
 import csv
 import json
 
+def write_file(json_content, csv_file_path, column_names):
+    """Read in the json dataset file and write it out to a csv file, given the column names."""
+    with open(csv_file_path, 'w' , encoding='utf-8' , newline='') as fout:
+#     with open(csv_file_path, 'wb+' , encoding='utf-8') as fout:
+        csv_file = csv.writer(fout)
+        csv_file.writerow(list(column_names))
+        
+        for line in json_content:
+            line_contents = json.loads(line)
+            print(line)
+            print(line_contents)
+#             csv_file.writerow(get_row(line_contents, column_names))
 
 def read_and_write_file(json_file_path, csv_file_path, column_names):
     """Read in the json dataset file and write it out to a csv file, given the column names."""

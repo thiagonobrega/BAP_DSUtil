@@ -1,0 +1,1 @@
+Cada pasta é um projeto

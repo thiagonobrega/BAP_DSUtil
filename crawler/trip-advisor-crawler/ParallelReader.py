@@ -23,28 +23,32 @@ def run(filepath,review_labels,rating_label,name_label,adress_labels):
             
         jd = json.loads(data)
         review_data = []
-            
-        for item in review_labels:
-            review_data.append(jd[item])
-                
-            #label
-            rating_data = jd['reviewRating']
-            review_data.append(rating_data[rating_label])
-                
-        place = jd['itemReviewed']    
         
-        place_data = []
-            #label
-        place_data.append(place[name_label])
-            
-        place_addr = place['address']
-            #label
-        for item in adress_labels:
-            place_data.append(place_addr[item])
-                
-            #label
-        country = place_addr['addressCountry']
-        place_data.append(country['name'])
+        try:
+            for item in review_labels:
+                review_data.append(jd[item])
                     
-        full_data = place_data + review_data
+                #label
+                rating_data = jd['reviewRating']
+                review_data.append(rating_data[rating_label])
+                    
+            place = jd['itemReviewed']    
+            
+            place_data = []
+                #label
+            place_data.append(place[name_label])
+                
+            place_addr = place['address']
+                #label
+            for item in adress_labels:
+                place_data.append(place_addr[item])
+                    
+                #label
+            country = place_addr['addressCountry']
+            place_data.append(country['name'])
+                        
+            full_data = place_data + review_data
+        except:
+            print(":: Error")
+            full_data = []
     return full_data
